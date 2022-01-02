@@ -1,5 +1,7 @@
 > DOCKER IMAGE BASED ON https://github.com/didstopia/rust-server WITH A WIDE RANGE OF MODIFICATIONS.
 
+This docker image is the core of the game server. It is pre-packaged with all the necessary plugins and extensions to communicate the GamingEventAPI network.
+
 # Rust server that runs inside a Docker container
 
 ---
