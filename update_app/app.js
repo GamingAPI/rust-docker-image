@@ -56,7 +56,7 @@ function checkForOxideUpdate() {
 		request(
 			{
 				url: 'https://api.github.com/repos/theumod/uMod.Rust/releases/latest',
-				headers: { Referer: 'rust-docker-server', 'User-Agent': 'Blackhawk' },
+				headers: { Referer: 'rust-docker-server', 'User-Agent': 'GamingEventAPI' },
 				timeout: 10000
 			},
 			function(error, response, body) {

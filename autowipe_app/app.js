@@ -10,7 +10,7 @@ const serverHostname = 'localhost';
 const serverPort = process.env.RUST_RCON_PORT || 28018;
 const serverPassword = process.env.RUST_RCON_PASSWORD || '1234';
 const serverIdentity =
-	process.env.RUST_SERVER_IDENTITY || 'BlackhawkTestserver';
+	process.env.RUST_SERVER_IDENTITY || 'TestServer';
 const wipe_buffer = 1000*60*60; // 1 hour before, notify players
 const rustFileLocation = process.env.RUST_SERVER_LOCATION;
 const map_wipe_period = process.env.MAP_WIPE_PERIOD;

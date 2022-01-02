@@ -41,8 +41,8 @@ SERVER_API_BASE_PATH (The base path to the API)
 ## Plugin variables
 SERVER_API_KEY (The API key the plugins need to use to contact the API)
 SERVER_ID (The server id of the rust server)
-BLACKHAWK_SERVER_${SERVER_ID}_NATS_NKEY_USER (The user nkey for nats)
-BLACKHAWK_SERVER_${SERVER_ID}_NATS_NKEY_SEED (The seed nkey for nats)
+SERVER_${SERVER_ID}_NATS_NKEY_USER (The user nkey for nats)
+SERVER_${SERVER_ID}_NATS_NKEY_SEED (The seed nkey for nats)
 ```
 
 # Logging and rotating logs
