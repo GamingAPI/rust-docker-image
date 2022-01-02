@@ -1,0 +1,16 @@
+{
+	"name": "restart_app",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"scripts": {
+		"start": "node app.js",
+		"start_npm": "node app.js"
+	},
+	"author": "",
+	"private": "true",
+	"dependencies": {
+		"request": "^2.88.0",
+		"ws": "7.1.1"
+	}
+}

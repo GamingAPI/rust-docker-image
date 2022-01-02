@@ -1,0 +1,23 @@
+{
+	"name": "autowipe_app",
+	"version": "1.0.0",
+	"description": "",
+	"main": "app.js",
+	"scripts": {
+		"start": "nodejs app.js",
+		"test": "mocha",
+		"debug-test": "npm test -- --inspect --debug-brk"
+	},
+	"author": "",
+	"private": true,
+	"dependencies": {
+		"glob": "7.1.4",
+		"moment-timezone": "0.5.31",
+		"ws": "7.1.1"
+	},
+	"devDependencies": {
+		"expect.js": "^0.3.1",
+		"fast-check": "^2.3.0",
+		"mocha": "^8.1.3"
+	}
+}
