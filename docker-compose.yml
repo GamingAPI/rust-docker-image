@@ -5,5 +5,5 @@ services:
     volumes:
       - ./rust:/steamcmd/rust
     ports:
-      - 28016
-      - 28015
+      - 28016:28016
+      - 28015:28015

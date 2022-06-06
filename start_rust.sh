@@ -10,6 +10,9 @@ exit_handler()
 
 	# Execute the RCON shutdown command
 	node /shutdown_app/app.js
+	shutdown_app_pid=$!
+	echo "Waiting for shutdown app to quit"
+	wait_pid "$shutdown_app_pid"
 	#sleep 5
 
 	# Stop the web server
@@ -200,16 +203,14 @@ fi
 # If necessary, download and install latest GamingAPI
 if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 	echo "Downloading and installing latest GamingAPI setup.."
-	tempOutputDir=$(mktemp -d)
-	mkdir /steamcmd/rust/gamingapi
 	lastestPluginReleaseData=$(curl -s https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest)
 	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll"))' | jq -s -c '.[]' | while read asset; do
-		filename=$(echo $asset | jq  -r '.name')
-		echo $filename
-		cp $tempOutputDir/$filename /steamcmd/rust/gamingapi/$filename
+		filename=$(echo $asset | jq -r '.name')
+		echo "Downloading $filename"
+		downloadUrl=$(echo $asset | jq -r '.browser_download_url')
+		echo "Downloading from $downloadUrl"
+		curl $downloadUrl -L -o /steamcmd/rust/RustDedicated_Data/Managed/$filename
 	done;
-
-	mv -v /steamcmd/rust/gamingapi/* /steamcmd/rust/RustDedicated_Data/Managed
 	echo "Done installing latest GamingAPI setup.."
 fi
 

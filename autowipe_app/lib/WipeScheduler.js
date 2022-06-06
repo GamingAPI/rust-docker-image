@@ -16,14 +16,12 @@ class WipeScheduler{
 		this.wipe_minute = parseInt(wipe_minute, 10);
 		this.exclude_force_week = typeof exclude_force_week === "boolean" ? exclude_force_week : (exclude_force_week == 'true');
 		this.wipe_day = parseInt(wipe_day, 10);
-		if(process.env.NODE_ENV.trim() === "production"){
-			console.log(`WipeScheduler:: Initiated with map_wipe_period ${map_wipe_period}`)
-			console.log(`WipeScheduler:: Initiated with map_wipes_until_full_wipe ${map_wipes_until_full_wipe}`)
-			console.log(`WipeScheduler:: Initiated with wipe_hour ${wipe_hour}`)
-			console.log(`WipeScheduler:: Initiated with wipe_minute ${wipe_minute}`)
-			console.log(`WipeScheduler:: Initiated with exclude_force_week ${exclude_force_week}`)
-			console.log(`WipeScheduler:: Initiated with wipe_day ${wipe_day}`)
-		}
+		console.log(`WipeScheduler:: Initiated with map_wipe_period ${map_wipe_period}`)
+		console.log(`WipeScheduler:: Initiated with map_wipes_until_full_wipe ${map_wipes_until_full_wipe}`)
+		console.log(`WipeScheduler:: Initiated with wipe_hour ${wipe_hour}`)
+		console.log(`WipeScheduler:: Initiated with wipe_minute ${wipe_minute}`)
+		console.log(`WipeScheduler:: Initiated with exclude_force_week ${exclude_force_week}`)
+		console.log(`WipeScheduler:: Initiated with wipe_day ${wipe_day}`)
 	}
 
 	shouldMapWipe(current_date){
@@ -101,9 +99,8 @@ class WipeScheduler{
 				exclude_force_week_func();
 			}
 		}
-		if(process.env.NODE_ENV.trim() === "production"){
-			console.log(`WipeScheduler:: Next wipe date is ${next_wipe_date.toString()}`);
-		}
+		console.log(`WipeScheduler:: Next wipe date is ${next_wipe_date.toString()}`);
+
 		time_to_wipe = next_wipe_date.diff(current_date);
 		return time_to_wipe;
 	}
