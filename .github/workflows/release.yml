@@ -23,4 +23,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/gamingeventapi/rust-docker-image:latest
+            ghcr.io/gamingapi/rust-docker-image:latest
