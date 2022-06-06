@@ -205,11 +205,17 @@ if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 	echo "Downloading and installing latest GamingAPI setup.."
 	lastestPluginReleaseData=$(curl -s https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest)
 	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll"))' | jq -s -c '.[]' | while read asset; do
+
 		filename=$(echo $asset | jq -r '.name')
 		echo "Downloading $filename"
 		downloadUrl=$(echo $asset | jq -r '.browser_download_url')
 		echo "Downloading from $downloadUrl"
-		curl $downloadUrl -L -o /steamcmd/rust/RustDedicated_Data/Managed/$filename
+		location="/steamcmd/rust/RustDedicated_Data/Managed/$filename"
+		# Plugins must be located within oxide folder
+		if [ "$filename" == "GamingAPIPlugins.dll" ]; then
+			location="/steamcmd/rust/oxide/plugins/$filename"
+		fi
+		curl $downloadUrl -L -o $location
 	done;
 	echo "Done installing latest GamingAPI setup.."
 fi
