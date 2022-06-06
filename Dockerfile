@@ -35,9 +35,6 @@ RUN curl -sL https://github.com/Facepunch/webrcon/archive/24b0898d86706723d52bb4
     mv /tmp/webrcon-24b0898d86706723d52bb4db8559d90f7c9e069b/* /usr/share/nginx/html/ && \
     rm -fr /tmp/webrcon-24b0898d86706723d52bb4db8559d90f7c9e069b
 
-# Customize the webrcon package to fit our needs
-ADD fix_conn.sh /tmp/fix_conn.sh
-
 # Create and set the steamcmd folder as a volume
 RUN mkdir -p /steamcmd/rust
 VOLUME ["/steamcmd/rust"]
@@ -56,12 +53,6 @@ RUN npm install
 ADD update_app/ /update_app/
 WORKDIR /update_app
 RUN npm install
-
-# Setup rcon command relay app
-ADD rcon_app/ /rcon_app/
-WORKDIR /rcon_app
-RUN npm install
-RUN ln -s /rcon_app/app.js /usr/bin/rcon
 
 # Add the steamcmd installation script
 ADD install.txt /install.txt
@@ -84,18 +75,18 @@ ENV RUST_SERVER_IDENTITY "Test"
 ENV RUST_SERVER_PORT "28015"
 ENV RUST_SERVER_IP "0.0.0.0"
 ENV RUST_SERVER_TAGS "vanilla"
-# ENV RUST_SERVER_SEED "12345"
-# ENV RUST_SERVER_NAME "Test"
-# ENV RUST_SERVER_DESCRIPTION "Test"
-# ENV RUST_SERVER_URL "https://www.test.com/"
-# ENV RUST_SERVER_BANNER_URL "https://example.com/test.png"
-ENV RUST_RCON_WEB "1"
+ENV RUST_SERVER_SEED "12345"
+ENV RUST_SERVER_NAME "Test"
+ENV RUST_SERVER_DESCRIPTION "Test"
+ENV RUST_SERVER_URL "https://www.test.com/"
+ENV RUST_SERVER_BANNER_URL "https://example.com/test.png"
 ENV RUST_RCON_PORT "28016"
 ENV RUST_RCON_PASSWORD "12345"
 ENV RUST_UPDATE_CHECKING "1"
 ENV RUST_UPDATE_BRANCH "public"
 ENV RUST_START_MODE "0"
 ENV RUST_OXIDE_ENABLED "1"
+ENV INSTALL_GAMINGAPI "1"
 ENV RUST_APP_PORT "28082"
 ENV RUST_OXIDE_UPDATE_ON_BOOT "1"
 ENV RUST_SERVER_WORLDSIZE "4000"
@@ -109,7 +100,7 @@ ENV RUST_SERVER_BAN_ENDPOINT "$SERVER_API_BASE_PATH"
 ENV RUST_AUTO_WIPING "1"
 # How many days are a map wipe?
 ENV MAP_WIPE_PERIOD "7"
-# How many times should we do map wipe to do a full wipe?
+# How many times should we do map wipe before doing a full wipe?
 ENV MAP_WIPES_UNTIL_FULL_WIPE "2"
 # What hour of the day should we do wipe?
 ENV WIPE_HOUR "17"

@@ -63,7 +63,6 @@ fi
 # Fix ownership
 chown -R $(whoami):$(whoami) /steamcmd/rust
 
-
 # Install/update steamcmd
 echo "Installing/updating steamcmd.."
 curl -s http://media.steampowered.com/installer/steamcmd_linux.tar.gz | tar -v -C /steamcmd -zx
@@ -114,9 +113,6 @@ if [ "$RUST_OXIDE_ENABLED" = "1" ]; then
 		OXIDE_URL=$(curl -sL https://api.github.com/repos/theumod/uMod.Rust/releases/latest | grep browser_download_url | cut -d '"' -f 4)
 		curl -sL $OXIDE_URL | bsdtar -xvf- -C /steamcmd/rust/
 		chmod 755 /steamcmd/rust/CSharpCompiler.x86_x64 2>&1 /dev/null
-
-		## NOTE: Disabled until I have time to properly fix this
-		#chown -R $PUID:$PGID /steamcmd/rust
 	fi
 fi
 
@@ -134,21 +130,6 @@ if [ ! -z ${RUST_RCON_PORT+x} ]; then
 fi
 if [ ! -z ${RUST_RCON_PASSWORD+x} ]; then
 	RUST_STARTUP_COMMAND="$RUST_STARTUP_COMMAND +rcon.password $RUST_RCON_PASSWORD"
-fi
-
-if [ ! -z ${RUST_RCON_WEB+x} ]; then
-	RUST_STARTUP_COMMAND="$RUST_STARTUP_COMMAND +rcon.web $RUST_RCON_WEB"
-	if [ "$RUST_RCON_WEB" = "1" ]; then
-		# Fix the webrcon (customizes a few elements)
-		bash /tmp/fix_conn.sh
-
-		# Start nginx (in the background)
-		echo "Starting web server.."
-		nginx
-		NGINX=$!
-		sleep 5
-		#nginx -g "daemon off;" && sleep 5 ## Used for debugging nginx
-	fi
 fi
 
 ## Disable logrotate if "-logfile" is set in $RUST_STARTUP_COMMAND
@@ -187,26 +168,11 @@ if [ "$RUST_UPDATE_CHECKING" = "1" ]; then
 	node /update_app/app.js &
 fi
 
-
 # Set the working directory
 cd /steamcmd/rust
 
-# Start the auto wipe if enabled
-if [ "$RUST_AUTO_WIPING" = "1" ]; then
-	# #write out current crontab
-	# crontab -l > mycron
-	# # Write the cronjob to the file
-	# echo "$RUST_MAP_AUTO_WIPING node /autowipe_app/app.js MapWipe" > mycron
-
-	# # Check if we should do full wiping at some point
-	# if [ ! -z ${RUST_FULL_AUTO_WIPING+x} ]; then
-	# 	echo "$RUST_FULL_AUTO_WIPING node /autowipe_app/app.js PlayerWipe" >> mycron
-	# fi
-	# #install new cron file
-	# crontab mycron
-	# rm mycron
-	# service cron reload
-	
+# Start auto wipe if enabled
+if [ "$RUST_AUTO_WIPING" = "1" ]; then	
 	if [ "$DEBUG_AUTO_WIPING" = "1" ]; then
 		node --inspect-brk=0.0.0.0:29229 /autowipe_app/app.js &
 		autowipe_app_pid=$!
@@ -229,6 +195,22 @@ else
 		echo $generatedSeed > /steamcmd/rust/server.seed
 		RUST_STARTUP_COMMAND="$RUST_STARTUP_COMMAND +server.seed \"$generatedSeed\""
 	fi
+fi
+
+# If necessary, download and install latest GamingAPI
+if [ "$INSTALL_GAMINGAPI" = "1" ]; then
+	echo "Downloading and installing latest GamingAPI setup.."
+	tempOutputDir=$(mktemp -d)
+	mkdir /steamcmd/rust/gamingapi
+	lastestPluginReleaseData=$(curl -s https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest)
+	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll"))' | jq -s -c '.[]' | while read asset; do
+		filename=$(echo $asset | jq  -r '.name')
+		echo $filename
+		cp $tempOutputDir/$filename /steamcmd/rust/gamingapi/$filename
+	done;
+
+	mv -v /steamcmd/rust/gamingapi/* /steamcmd/rust/RustDedicated_Data/Managed
+	echo "Done installing latest GamingAPI setup.."
 fi
 
 # Run the server

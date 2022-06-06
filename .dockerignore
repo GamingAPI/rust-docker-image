@@ -3,7 +3,6 @@ node_modules
 shutdown_app/node_modules
 restart_app/node_modules
 autowipe_app/node_modules
-rcon_app/node_modules
 *.log
 rust_data*
 .DS_Store
