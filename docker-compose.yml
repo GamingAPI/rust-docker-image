@@ -1,9 +1,0 @@
-version: '3.8'
-services:
-  rust:
-    build: .
-    volumes:
-      - ./rust:/steamcmd/rust
-    ports:
-      - 28016:28016
-      - 28015:28015

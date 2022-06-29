@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  rust:
+    image: docker.io/library/deployment_rust
+    environment:
+      RUST_RCON_PASSWORD: "1234"
+      GAMINGAPI_NATS_SERVER_HOST: "nats://nats:4222"
+      GAMINGAPI_SERVER_ID: 101
+      GAMINGAPI_NATS_NKEY_USER: "UCI2NCSIEV3DXLYYR5KQXYCZ7CIW4KYXHLSGXJOZ7TSRRKHP2BM5IVMU"
+      GAMINGAPI_NATS_NKEY_SEED: "SUAHZGQCK3PKMY5JBY2PBJUK2SA2IAGNX7VXYQJ75MLIU2IWQE235OBLJM"
+      NODE_ENV: "production"
+    volumes:
+      - "../rust:/steamcmd/rust"
+    ports:
+      - 28016:28016
+      - 28015:28015
+  nats:
+    restart: unless-stopped
+    image: nats
+    command: "-c /etc/nats/nats.conf"
+    configs:
+      - source: local-nats-config
+        target: /etc/nats/nats.conf
+    volumes:
+      - "nats:/data/gamingapi"
+    environment: 
+      - ADMIN_PASSWORD="12345"
+    ports:
+      - 4222:4222 
+
+configs:
+  local-nats-config:
+    name: nats-${SETTINGS_TIMESTAMP}.conf
+    file: ./nats.conf
+
+volumes:
+  nats:
