@@ -211,8 +211,11 @@ if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 		downloadUrl=$(echo $asset | jq -r '.browser_download_url')
 		echo "Downloading from $downloadUrl"
 		location="/steamcmd/rust/RustDedicated_Data/Managed/$filename"
+
 		# Plugins must be located within oxide folder
-		if [ "$filename" == "GamingAPIPlugins.dll" ]; then
+		fileExtension=$(echo $filename | cut -d. -f2)
+		if [ "$fileExtension" == "cs" ]
+		then
 			location="/steamcmd/rust/oxide/plugins/$filename"
 		fi
 		curl $downloadUrl -L -o $location
