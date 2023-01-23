@@ -200,7 +200,7 @@ fi
 if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 	echo "Downloading and installing latest GamingAPI setup.."
 	lastestPluginReleaseData=$(curl -s https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest)
-	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll") or select(.name | contains(".cs"))' | jq -s -c '.[]' | while read asset; do
+	echo $lastestPluginReleaseData | jq -r '.assets[] | select(.name | contains(".dll") or contains(".cs"))' | jq -s -c '.[]' | while read asset; do
 		filename=$(echo $asset | jq -r '.name')
 		echo "Downloading $filename"
 		downloadUrl=$(echo $asset | jq -r '.browser_download_url')

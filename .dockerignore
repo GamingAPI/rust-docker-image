@@ -1,7 +1,7 @@
 sample.txt
 node_modules
 shutdown_app/node_modules
-restart_app/node_modules
+update_app/node_modules
 autowipe_app/node_modules
 *.log
 rust_data*
