@@ -4,6 +4,15 @@ This docker image is the core of the game server. It is pre-packaged with all th
 
 # Usages
 
+## Stopping a running server
+The docker image has a built in graceful shutdown that allows players to finish up and the game server to save and quit gracefully. In order for the game server to have enough time to do that, you need to use the following command instead of the raw stop command.
+
+The graceful shutdown will take 5 minutes, on the safe-side we timeout at 6 minutes.
+
+```
+docker stop --time 360 <CONTAINER>
+```
+
 ## Docker
 
 ```
@@ -72,11 +81,15 @@ RUST_UPDATE_BRANCH (DEFAULT: "public" - Set to match the branch that you want to
 RUST_START_MODE (DEFAULT: "0" - Determines if the server should update and then start (0), only update (1) or only start (2))
 RUST_OXIDE_ENABLED (DEFAULT: "1" - Set to 1 to automatically install the latest version of Oxide)
 RUST_OXIDE_UPDATE_ON_BOOT (DEFAULT: "1" - Set to 0 to disable automatic update of Oxide on boot)
-INSTALL_GAMINGAPI (DEFAULT: "1" - Set to 1 to automatically install the latest version of Oxide)
-GAMINGAPI_NATS_SERVER_HOST
+INSTALL_GAMINGAPI (DEFAULT: "1" - Set to 1 to automatically install the latest version of GamingAPI)
 GAMINGAPI_SERVER_ID (The server id of the rust server, you can find this value in the )
-GAMINGAPI_NATS_NKEY_USER (The user nkey the GamingAPI NATS broker)
-GAMINGAPI_NATS_NKEY_SEED (The seed nkey the GamingAPI NATS broker)
+GAMINGAPI_NATS_SERVER_HOST (The url for the nats server to use)
+GAMINGAPI_NATS_AUTHENTICATION_TYPE (Type of authentication, either "jwt" or "nkey")
+GAMINGAPI_NATS_JWT_USER (The JWT user for the GamingAPI NATS broker, used when GAMINGAPI_NATS_AUTHENTICATION_TYPE is set to "jwt" )
+GAMINGAPI_NATS_JWT_SEED (The JWT seed for the GamingAPI NATS broker, used when GAMINGAPI_NATS_AUTHENTICATION_TYPE is set to "jwt" )
+GAMINGAPI_NATS_NKEY_USER (The user nkey the GamingAPI NATS broker, used when GAMINGAPI_NATS_AUTHENTICATION_TYPE is set to "nkey" )
+GAMINGAPI_NATS_NKEY_SEED (The seed nkey the GamingAPI NATS broker, used when GAMINGAPI_NATS_AUTHENTICATION_TYPE is set to "nkey")
+
 RUST_AUTO_WIPING (DEFAULT: "1" - Set to 1 to enable auto wipe functionality)
 MAP_WIPE_PERIOD (DEFAULT: "7" - How many days are a map wipe?)
 MAP_WIPES_UNTIL_FULL_WIPE (DEFAULT: "2" - How many times should we do map wipe before doing a full wipe?)
@@ -91,3 +104,4 @@ WIPE_DAY (DEFAULT: "0" - What day of the week do we want to wipe the server? 0 =
 The image now supports log rotation, and all you need to do to enable it is to remove any `-logfile` arguments from your startup arguments.
 Log files will be created under `logs/` with the server identity and the current date and time.
 When the server starts up or restarts, it will move old logs to `logs/archive/`.
+

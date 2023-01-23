@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 var request = require('request');
 var isRestarting = false;
-const lastUpdatedDate = Math.floor(new Date() / 1000);
+const lastUpdatedOxideDate = Math.floor(new Date() / 1000);
+const lastUpdatedGamingApiDate = Math.floor(new Date() / 1000);
 var updateCheckInterval = 1000 * 60 * 5; // Check each 15 min
 const RUST_OXIDE_ENABLED = process.env.RUST_OXIDE_ENABLED | true;
 var WebSocket = require('ws');
@@ -25,7 +26,7 @@ async function Scenario1(){
 }
 
 /**
- * oxide update -> update
+ * oxide update, update immediately 
  */
 async function Scenario2(){
 	if (RUST_OXIDE_ENABLED) {
@@ -56,7 +57,7 @@ function checkForOxideUpdate() {
 		request(
 			{
 				url: 'https://api.github.com/repos/theumod/uMod.Rust/releases/latest',
-				headers: { Referer: 'rust-docker-server', 'User-Agent': 'GamingEventAPI' },
+				headers: { Referer: 'rust-docker-server', 'User-Agent': 'GamingAPI' },
 				timeout: 10000
 			},
 			function(error, response, body) {
@@ -64,7 +65,7 @@ function checkForOxideUpdate() {
 					var info = JSON.parse(body);
 					var published_at = Math.floor(new Date('' + info.published_at) / 1000);
 					if (published_at !== undefined) {
-						if (published_at >= lastUpdatedDate) {
+						if (published_at >= lastUpdatedOxideDate) {
 							console.log('UpdateApp:: Oxide update is out');
 							resolve(true);
 							return;
@@ -79,6 +80,44 @@ function checkForOxideUpdate() {
 				} else {
 					console.log(
 						'UpdateApp:: Response error for checkForOxideUpdate: ' +
+							response.statusCode
+					);
+					reject(response);
+				}
+			}
+		);
+	});
+}
+
+function checkForGamingApiUpdate() {
+	return new Promise((resolve, reject) => {
+		console.log('UpdateApp:: Checking if a GamingAPI update is available..');
+		request(
+			{
+				url: 'https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest',
+				headers: { Referer: 'rust-docker-server', 'User-Agent': 'GamingAPI' },
+				timeout: 10000
+			},
+			function(error, response, body) {
+				if (!error && response.statusCode === 200) {
+					var info = JSON.parse(body);
+					var published_at = Math.floor(new Date('' + info.published_at) / 1000);
+					if (published_at !== undefined) {
+						if (published_at >= lastUpdatedGamingApiDate) {
+							console.log('UpdateApp:: GamingAPI update is out');
+							resolve(true);
+							return;
+						}
+					}
+					resolve(false);
+					return;
+				}
+				if (error != null) {
+					console.log('UpdateApp:: Error for checkForGamingApiUpdate: ' + error);
+					reject(error);
+				} else {
+					console.log(
+						'UpdateApp:: Response error for checkForGamingApiUpdate: ' +
 							response.statusCode
 					);
 					reject(response);
@@ -114,7 +153,7 @@ function checkForRustUpdate(){
 		const lastServerUpdate = serverUpdates[serverUpdates.length - 1];
 	
 		if (lastServerUpdate !== undefined) {
-			if (lastServerUpdate >= lastUpdatedDate) {
+			if (lastServerUpdate >= lastUpdatedOxideDate) {
 				return true;
 			}
 		}
@@ -123,7 +162,7 @@ function checkForRustUpdate(){
 	const checkForClientUpdate = (info) => {
 		var latest = info.latest;
 		if (latest !== undefined) {
-			if (latest >= lastUpdatedDate) {
+			if (latest >= lastUpdatedOxideDate) {
 				return true;
 			}
 		}

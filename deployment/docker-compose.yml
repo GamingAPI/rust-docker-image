@@ -1,7 +1,10 @@
 version: '3.8'
 services:
   rust:
-    image: docker.io/library/deployment_rust
+    container_name: rust
+    build: 
+      context: ../
+    image: ghcr.io/gamingapi/rust-docker-image:latest
     environment:
       RUST_RCON_PASSWORD: "1234"
       GAMINGAPI_NATS_SERVER_HOST: "nats://nats:4222"
@@ -9,24 +12,48 @@ services:
       GAMINGAPI_NATS_NKEY_USER: "UCI2NCSIEV3DXLYYR5KQXYCZ7CIW4KYXHLSGXJOZ7TSRRKHP2BM5IVMU"
       GAMINGAPI_NATS_NKEY_SEED: "SUAHZGQCK3PKMY5JBY2PBJUK2SA2IAGNX7VXYQJ75MLIU2IWQE235OBLJM"
       NODE_ENV: "production"
+      RUST_SERVER_WORLDSIZE: 1500
+      RUST_APP_PORT: 28202
+      RUST_RCON_PORT: 28201
+      RUST_SERVER_PORT: 28200
+      INSTALL_GAMINGAPI: 0
     volumes:
       - "../rust:/steamcmd/rust"
     ports:
-      - 28016:28016
-      - 28015:28015
+      - target: 28202
+        published: 28202
+        protocol: tcp
+        mode: host
+      - target: 28200
+        published: 28200
+        protocol: tcp
+        mode: host
+      - target: 28201
+        published: 28201
+        protocol: tcp
+        mode: host
+      - target: 28200
+        published: 28200
+        protocol: udp
+        mode: host
+      - target: 28201
+        published: 28201
+        protocol: udp
+        mode: host
   nats:
-    restart: unless-stopped
+    container_name: nats
     image: nats
-    command: "-c /etc/nats/nats.conf"
+    command: "-c /etc/nats/nats.conf -DV"
     configs:
       - source: local-nats-config
         target: /etc/nats/nats.conf
     volumes:
       - "nats:/data/gamingapi"
+      - "C:/Users/Lagoni/.nsc/gamingapi:/data/jwt"
     environment: 
       - ADMIN_PASSWORD="12345"
     ports:
-      - 4222:4222 
+      - 4222:4222
 
 configs:
   local-nats-config:

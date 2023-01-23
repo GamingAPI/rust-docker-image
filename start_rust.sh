@@ -3,6 +3,11 @@
 # Enable debugging
 # set -x
 
+wait_pid () 
+{
+	wait "$1"
+} 
+
 # Define the exit handler
 exit_handler()
 {
@@ -13,22 +18,13 @@ exit_handler()
 	shutdown_app_pid=$!
 	echo "Waiting for shutdown app to quit"
 	wait_pid "$shutdown_app_pid"
-	#sleep 5
 
 	# Stop the web server
 	pkill -f nginx
 
-	# Forcefully terminate Rust
-	#kill -TERM "$child"
-
 	echo "Exiting.."
 	exit
 }
-
-wait_pid () 
-{
-	wait "$1"
-} 
 
 # Trap specific signals and forward to the exit handler
 #trap 'exit_handler' SIGHUP SIGINT SIGQUIT SIGTERM
@@ -204,8 +200,7 @@ fi
 if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 	echo "Downloading and installing latest GamingAPI setup.."
 	lastestPluginReleaseData=$(curl -s https://api.github.com/repos/GamingAPI/umod-rust-server-plugin/releases/latest)
-	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll"))' | jq -s -c '.[]' | while read asset; do
-
+	echo $lastestPluginReleaseData | jq -r ' .assets[] | select(.name | contains(".dll") or select(.name | contains(".cs"))' | jq -s -c '.[]' | while read asset; do
 		filename=$(echo $asset | jq -r '.name')
 		echo "Downloading $filename"
 		downloadUrl=$(echo $asset | jq -r '.browser_download_url')
@@ -216,7 +211,9 @@ if [ "$INSTALL_GAMINGAPI" = "1" ]; then
 		fileExtension=$(echo $filename | cut -d. -f2)
 		if [ "$fileExtension" == "cs" ]
 		then
+			echo "Found plugin $filename, downloading into plugins"
 			location="/steamcmd/rust/oxide/plugins/$filename"
+			mkdir -p /steamcmd/rust/oxide/plugins
 		fi
 		curl $downloadUrl -L -o $location
 	done;
