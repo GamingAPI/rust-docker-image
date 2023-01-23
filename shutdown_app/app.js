@@ -11,7 +11,6 @@ var ws = new WebSocket('ws://' + serverHostname + ':' + serverPort + '/' + serve
 ws.on('open', function open () {
   console.log('ShutdownApp::RCON connection opened')
   setTimeout(function () {
-    
     console.log('ShutdownApp::RCON sending out warning about shutdown in 5 minutes');
     ws.send(createPacket('say "<color=red>NOTICE</color>: We are updating our rust servers in 5 minutes, so get to a safe area! Sorry for the inconvenience."'));
     setTimeout(function () {
@@ -54,4 +53,3 @@ function createPacket (command) {
   }
   return JSON.stringify(packet)
 }
-
