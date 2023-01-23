@@ -121,7 +121,7 @@ ENV EXCLUDE_FORCE_WEEK "0"
 # What day of the week do we want to wipe the server? 0 = monday, 6 = sunday 
 ENV WIPE_DAY "0"
 
-RUN chmod +x ./start.sh
+RUN ["chmod", "+x", "./start.sh"]
 
 # Start the server
 ENTRYPOINT ["./start.sh"]
